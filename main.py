@@ -16,6 +16,10 @@ class Patterns(Enum):
     LIST = r'^-\s+(.+)$'
     BOLD = r'\*\*(.*?)\*\*'
     ITALIC = r'\*(.*?)\*'
+    STRIKETHROUGH = r'~~(.*?)~~'
+    UNDERLINE = r'__(.*?)__'
+    URL = r'\[(.*?)\]\((.*?)\)'
+    IMAGE = r'!\[(.*?)\]\((.*?)\)'
 
 def get_markdown(content):
     if not content:
@@ -45,6 +49,35 @@ def headings_parser(pattern, text):
             return p.sub(r'<h6>\1</h6>', text)
     return text
 
+
+def list_parser(pattern, text):
+    p = re.compile(pattern, flags=re.MULTILINE)
+    return p.sub(r'<li>\1</li>', text)
+
+def bold_parser(pattern, text):
+    p = re.compile(pattern)
+    return p.sub(r'<strong>\1</strong>', text)
+
+def italic_parser(pattern, text):
+    p = re.compile(pattern)
+    return p.sub(r'<em>\1</em>', text)
+
+def strikethrough_parser(pattern, text):
+    p = re.compile(pattern)
+    return p.sub(r'<del>\1</del>', text)
+
+def underline_parser(pattern, text):
+    p = re.compile(pattern)
+    return p.sub(r'<u>\1</u>', text)
+
+def url_parser(pattern, text):
+    p = re.compile(pattern)
+    return p.sub(r'<a href="\2">\1</a>', text)
+
+def image_parser(pattern, text):
+    p = re.compile(pattern)
+    return p.sub(r'<img src="\2" alt="\1">', text)
+
 def main():
     text = textwrap.dedent("""\
     # Welcome to my SSG
@@ -57,6 +90,7 @@ def main():
     parsed_text = text
     for heading in Headings:
         parsed_text = headings_parser(heading.value, parsed_text)
+    parsed_text = list_parser(Patterns.LIST.value, parsed_text)
 
     if os.path.exists("content"):
         content = os.listdir("content")
