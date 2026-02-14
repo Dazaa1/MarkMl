@@ -1,5 +1,5 @@
 import sys
-from markml.utils import convert_markdown_to_html
+from markml.utils import convert_markdown_to_html, replace_base
 
 
 def main():
@@ -9,6 +9,7 @@ def main():
         source = sys.argv[1]
         destination = sys.argv[2]
         convert_markdown_to_html(source, destination)
+        replace_base(destination, "public/base.html")
         print("\nHello from funcstatic!")
 
 if __name__ == "__main__":

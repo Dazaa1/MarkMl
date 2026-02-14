@@ -1,5 +1,6 @@
 from .enums import Headings, Patterns
 from .parsers import headings_parser, list_parser, bold_parser, italic_parser, strikethrough_parser, underline_parser, url_parser, image_parser
+import os
 
 def get_markdown(content):
     if not content:
@@ -31,5 +32,15 @@ def convert_markdown_to_html(source, destination):
 
     html_content = markdown_to_html(markdown_content)
 
-    with open(destination, 'w') as dest_file:
+    real_destination = os.path.join("public", destination)
+    with open(real_destination, 'w') as dest_file:
         dest_file.write(html_content)
+
+def replace_base(markdown_text, path):
+    with open(path, 'r') as base_file:
+        base_content = base_file.read()
+
+    for line in base_content.splitlines():
+        if "{{ content }}" in line:
+            return base_content.replace("{{ content }}", markdown_text)
+    return markdown_text
