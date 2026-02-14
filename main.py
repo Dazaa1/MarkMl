@@ -1,109 +1,14 @@
 import sys
-import os
-import re
-from enum import Enum
-import textwrap
+from markml.utils import convert_markdown_to_html
 
-class Headings(Enum):
-    ONE = r'^#\s+(.+)$'
-    TWO = r'^##\s+(.+)$'
-    THREE = r'^###\s+(.+)$'
-    FOUR = r'^####\s+(.+)$'
-    FIVE = r'^#####\s+(.+)$'
-    SIX = r'^######\s+(.+)$'
-
-class Patterns(Enum):
-    LIST = r'^-\s+(.+)$'
-    BOLD = r'\*\*(.*?)\*\*'
-    ITALIC = r'\*(.*?)\*'
-    STRIKETHROUGH = r'~~(.*?)~~'
-    UNDERLINE = r'__(.*?)__'
-    URL = r'\[(.*?)\]\((.*?)\)'
-    IMAGE = r'!\[(.*?)\]\((.*?)\)'
-
-def get_markdown(content):
-    if not content:
-        return []
-    results = []
-    # Simplified check for .md files
-    if content[0].endswith(".md"):
-        results.append(content[0])
-    
-    results.extend(get_markdown(content[1:]))
-    return results
-
-def headings_parser(pattern, text):
-    p = re.compile(pattern, flags=re.MULTILINE)
-    match pattern:
-        case Headings.ONE.value:
-            return p.sub(r'<h1>\1</h1>', text)
-        case Headings.TWO.value:
-            return p.sub(r'<h2>\1</h2>', text)
-        case Headings.THREE.value:
-            return p.sub(r'<h3>\1</h3>', text)
-        case Headings.FOUR.value:
-            return p.sub(r'<h4>\1</h4>', text)
-        case Headings.FIVE.value:
-            return p.sub(r'<h5>\1</h5>', text)
-        case Headings.SIX.value:
-            return p.sub(r'<h6>\1</h6>', text)
-    return text
-
-
-def list_parser(pattern, text):
-    p = re.compile(pattern, flags=re.MULTILINE)
-    return p.sub(r'<li>\1</li>', text)
-
-def bold_parser(pattern, text):
-    p = re.compile(pattern)
-    return p.sub(r'<strong>\1</strong>', text)
-
-def italic_parser(pattern, text):
-    p = re.compile(pattern)
-    return p.sub(r'<em>\1</em>', text)
-
-def strikethrough_parser(pattern, text):
-    p = re.compile(pattern)
-    return p.sub(r'<del>\1</del>', text)
-
-def underline_parser(pattern, text):
-    p = re.compile(pattern)
-    return p.sub(r'<u>\1</u>', text)
-
-def url_parser(pattern, text):
-    p = re.compile(pattern)
-    return p.sub(r'<a href="\2">\1</a>', text)
-
-def image_parser(pattern, text):
-    p = re.compile(pattern)
-    return p.sub(r'<img src="\2" alt="\1">', text)
 
 def main():
-    text = textwrap.dedent("""\
-    # Welcome to my SSG
-    ### List Overview
-    Lists are essential for keeping your thoughts organized:
-
-    - Hello world.
-    """)
-
-    parsed_text = text
-    for heading in Headings:
-        parsed_text = headings_parser(heading.value, parsed_text)
-    parsed_text = list_parser(Patterns.LIST.value, parsed_text)
-
-    if os.path.exists("content"):
-        content = os.listdir("content")
-        print("Markdown files found:", get_markdown(content))
-    else:
-        print("Note: 'content' directory not found.")
-
-    print("\n--- Parsed HTML Output ---")
-    print(parsed_text)
-
     if len(sys.argv) < 3:
         print("\nUsage: ./main.py <source> <destination>")
     else:
+        source = sys.argv[1]
+        destination = sys.argv[2]
+        convert_markdown_to_html(source, destination)
         print("\nHello from funcstatic!")
 
 if __name__ == "__main__":
