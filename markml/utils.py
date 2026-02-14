@@ -31,10 +31,11 @@ def convert_markdown_to_html(source, destination):
         markdown_content = src_file.read()
 
     html_content = markdown_to_html(markdown_content)
+    replaced_content = replace_base(html_content, "templates/base.html")
 
     real_destination = os.path.join("public", destination)
     with open(real_destination, 'w') as dest_file:
-        dest_file.write(html_content)
+        dest_file.write(replaced_content)
 
 def replace_base(markdown_text, path):
     with open(path, 'r') as base_file:
@@ -43,4 +44,4 @@ def replace_base(markdown_text, path):
     for line in base_content.splitlines():
         if "{{ content }}" in line:
             return base_content.replace("{{ content }}", markdown_text)
-    return markdown_text
+    return base_content
