@@ -1,5 +1,5 @@
 import re
-from .enums import Headings, Patterns
+from .enums import Headings
 
 def headings_parser(pattern, text):
     p = re.compile(pattern, flags=re.MULTILINE)
@@ -45,4 +45,8 @@ def url_parser(pattern, text):
 
 def image_parser(pattern, text):
     p = re.compile(pattern)
-    return p.sub(r'<img src="\2" alt="\1">', text)
+    return p.sub(r'<img src="images/\2" alt="\1">', text)
+
+def title_parser(pattern, text):
+    p = re.compile(pattern, flags=re.MULTILINE)
+    return p.sub(r'<title>\1</title>', text)

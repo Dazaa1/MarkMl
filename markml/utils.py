@@ -1,6 +1,8 @@
 from .enums import Headings, Patterns
-from .parsers import headings_parser, list_parser, bold_parser, italic_parser, strikethrough_parser, underline_parser, url_parser, image_parser
+from .parsers import headings_parser, list_parser, bold_parser, italic_parser, strikethrough_parser, underline_parser, url_parser, image_parser, title_parser
 import os
+import re
+import shutil
 
 def get_markdown(content):
     if not content:
@@ -24,11 +26,19 @@ def markdown_to_html(markdown_text):
     parsed_text = underline_parser(Patterns.UNDERLINE.value, parsed_text)
     parsed_text = url_parser(Patterns.URL.value, parsed_text)
     parsed_text = image_parser(Patterns.IMAGE.value, parsed_text)
+    parsed_text = title_parser(Patterns.TITLE.value, parsed_text)
     return parsed_text
 
 def convert_markdown_to_html(source, destination):
     with open(source, 'r') as src_file:
         markdown_content = src_file.read()
+    print("Read markdown content successfully.")
+    print("Image pattern found in markdown content.")
+    image_paths = re.findall(Patterns.IMAGE.value, markdown_content)
+    print(f"Found image paths: {image_paths}")
+    for image_path in image_paths:
+        os.makedirs(os.path.join("public", "images"), exist_ok=True)
+        shutil.copy(os.path.join("content", image_path[1]), "public/images/")
 
     html_content = markdown_to_html(markdown_content)
     replaced_content = replace_base(html_content, "templates/base.html")
@@ -41,7 +51,7 @@ def replace_base(markdown_text, path):
     with open(path, 'r') as base_file:
         base_content = base_file.read()
 
-    for line in base_content.splitlines():
-        if "{{ content }}" in line:
-            return base_content.replace("{{ content }}", markdown_text)
-    return base_content
+    if "{{ content }}" in base_content:
+        return base_content.replace("{{ content }}", markdown_text)
+    
+    if "---"

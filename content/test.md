@@ -1,5 +1,7 @@
 # Dummy Markdown Content
-
+---
+title: My Document Title
+---
 ## Introduction
 
 This is a sample markdown file for testing purposes.
@@ -11,6 +13,7 @@ This is a sample markdown file for testing purposes.
 - **Bold text**
 - *Italic text*
 - [A sample link](https://example.com)
+![image](image.jpg)
 
 ## Code Example
 

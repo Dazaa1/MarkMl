@@ -16,3 +16,4 @@ class Patterns(Enum):
     UNDERLINE = r'__(.*?)__'
     URL = r'\[(.*?)\]\((.*?)\)'
     IMAGE = r'!\[(.*?)\]\((.*?)\)'
+    TITLE = r'^---\s*title:\s*(.+?)\s*---$'
